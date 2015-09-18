@@ -109,18 +109,20 @@ function installAgent()
   URL_HOST=$(echo "${DOWNLOAD_URL}" | awk -F/ '{print $3}') #www.bamboo.com
 
   AGENT_SERVER_URL="${URL_SCHEME}://${URL_HOST}/agentServer/"
-
+  TEMPDIR=$(mktemp -d -t bamboo-agent-installer)
   printLog "Creating the missing paths ..."
   createMissingDirs
 
   #download the agent
   printLog "Downloading the agent ..."
-  curl -L -k -o atlassian-bamboo-agent-installer.jar "$DOWNLOAD_URL"
+  curl -L -k -o "${TEMPDIR}/atlassian-bamboo-agent-installer.jar" "$DOWNLOAD_URL"
 
   #install the agent
   printLog "Installing the agent ..."
-  java -Dbamboo.agent.ignoreServerCertName=true "-Dbamboo.home=${BAMBOOAGENT_PATH}" -jar atlassian-bamboo-agent-installer.jar  "${AGENT_SERVER_URL}" install
+  java -Dbamboo.agent.ignoreServerCertName=true "-Dbamboo.home=${BAMBOOAGENT_PATH}" -jar "${TEMPDIR}/atlassian-bamboo-agent-installer.jar"  "${AGENT_SERVER_URL}" install
 
+  rm -fr "${TEMPDIR}"
+  
   #inject env varibles from ~/.profile
   printLog "Adding ~/.profile as source ..."
   cat "${BAMBOOAGENT_PATH}/bin/bamboo-agent.sh" | sed "s|export PATH|source ~/.profile; export PATH|g" > "${BAMBOOAGENT_PATH}/bin/bamboo-agent.sh.1"
