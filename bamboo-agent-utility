@@ -122,7 +122,7 @@ function installAgent()
   java -Dbamboo.agent.ignoreServerCertName=true "-Dbamboo.home=${BAMBOOAGENT_PATH}" -jar "${TEMPDIR}/atlassian-bamboo-agent-installer.jar"  "${AGENT_SERVER_URL}" install
 
   rm -fr "${TEMPDIR}"
-  
+
   #inject env varibles from ~/.profile
   printLog "Adding ~/.profile as source ..."
   cat "${BAMBOOAGENT_PATH}/bin/bamboo-agent.sh" | sed "s|export PATH|source ~/.profile; export PATH|g" > "${BAMBOOAGENT_PATH}/bin/bamboo-agent.sh.1"
@@ -157,7 +157,7 @@ fi
 ACTION="$1"
 INSTALL_PATH="$2"
 AGENT_ID=$(basename "${INSTALL_PATH}")
-BAMBOOAGENT_PATH="${INSTALL_PATH}/${AGENT_ID}"
+BAMBOOAGENT_PATH="${INSTALL_PATH}"
 LAUNCHCTL_PATH="${HOME}/Library/LaunchAgents/com.${AGENT_ID}.plist"
 
 case "${ACTION}" in
